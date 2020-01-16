@@ -21,6 +21,5 @@ setup(
         'Programming Language :: Python :: 3.8',
     ],
     keywords='webassembly',
-    python_requires='!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4',
-    install_requires=['construct'],
+    python_requires='!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4'
 )

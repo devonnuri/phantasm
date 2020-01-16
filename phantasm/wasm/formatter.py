@@ -1,6 +1,4 @@
 """Defines functions converting raw instructions into textual form."""
-from __future__ import print_function, absolute_import, division, unicode_literals
-
 import itertools
 
 from .opcodes import INSN_LEAVE_BLOCK, INSN_ENTER_BLOCK
@@ -26,10 +24,12 @@ def format_instruction(insn):
         for x in insn.op.imm_struct._meta.fields
     ])
 
+
 _mutability_str_mapping = {
     MUTABLE: "mut",
     IMMUTABLE: ""
 }
+
 
 def format_mutability(mutability):
     """Takes a value type `int`, returning its string representation."""
@@ -37,6 +37,7 @@ def format_mutability(mutability):
         return _mutability_str_mapping[mutability]
     except KeyError:
         raise ValueError('Bad value for value type ({})'.format(mutability))
+
 
 _lang_type_str_mapping = {
     VAL_TYPE_I32: 'i32',
@@ -55,10 +56,10 @@ def format_lang_type(lang_type):
 
 
 def format_function(
-    func_body,
-    func_type=None,
-    indent=2,
-    format_locals=True,
+        func_body,
+        func_type=None,
+        indent=2,
+        format_locals=True,
 ):
     """
     Takes a `FunctionBody` and optionally a `FunctionType`, yielding the string 

@@ -1,6 +1,4 @@
 """Defines immediate types for WASM bytecode instructions."""
-from __future__ import print_function, absolute_import, division, unicode_literals
-
 from .wasmtypes import *
 from .types import Structure, RepeatField
 

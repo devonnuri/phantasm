@@ -1,5 +1,5 @@
 from typing import IO
-import wasm
+import phantasm.wasm as wasm
 
 
 class Parser:
@@ -16,7 +16,4 @@ class Parser:
         header, header_data = next(modules)
 
         self.version = header.version
-        print(header.version.to_string())
-
-        for current_section in modules:
-            print(current_section)
+        print(header.version)

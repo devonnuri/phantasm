@@ -1,9 +1,6 @@
 """Defines compatibility quirks for Python 2.7."""
-from __future__ import print_function, absolute_import, division, unicode_literals
-
 import sys
 import functools
-import logging
 import warnings
 
 
@@ -43,7 +40,7 @@ def indent(text, prefix, predicate=None):
 
     def prefixed_lines():
         for line in text.splitlines(True):
-            yield (prefix + line if predicate(line) else line)
+            yield prefix + line if predicate(line) else line
     return ''.join(prefixed_lines())
 
 

@@ -1,7 +1,7 @@
 """Provides functions for decoding WASM modules and bytecode."""
-from __future__ import print_function, absolute_import, division, unicode_literals
-
 from collections import namedtuple
+from typing import Generator
+
 from .modtypes import ModuleHeader, Section, SEC_UNK, SEC_NAME, NameSubSection
 from .opcodes import OPCODE_MAP
 from .compat import byte2int
@@ -11,7 +11,7 @@ Instruction = namedtuple('Instruction', 'op imm len')
 ModuleFragment = namedtuple('ModuleFragment', 'type data')
 
 
-def decode_bytecode(bytecode):
+def decode_bytecode(bytecode: bytes) -> Generator[Instruction]:
     """Decodes raw bytecode, yielding `Instruction`s."""
     bytecode_wnd = memoryview(bytecode)
     while bytecode_wnd:
@@ -29,7 +29,7 @@ def decode_bytecode(bytecode):
         bytecode_wnd = bytecode_wnd[insn_len:]
 
 
-def decode_module(module, decode_name_subsections=False):
+def decode_module(module: bytes, decode_name_subsections=False) -> Generator[ModuleFragment]:
     """Decodes raw WASM modules, yielding `ModuleFragment`s."""
     module_wnd = memoryview(module)
 
