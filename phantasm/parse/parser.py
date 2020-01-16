@@ -16,5 +16,5 @@ class Parser:
         header, header_data = next(modules)
         print(header.to_string(header_data))
 
-        self.version = header.version
-        print(header.version)
+        for section, section_data in modules:
+            print(section.to_string(section_data))

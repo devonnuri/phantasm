@@ -1,11 +1,8 @@
 """Defines data structures used in WASM (binary) modules."""
-from __future__ import print_function, absolute_import, division, unicode_literals
-
 from .wasmtypes import *
 from .opcodes import Opcode
 from .types import (
-    Structure, CondField, RepeatField,
-    ChoiceField, WasmField, ConstField, BytesField,
+    Structure, CondField, RepeatField, ChoiceField, WasmField, BytesField,
 )
 
 

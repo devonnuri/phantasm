@@ -1,14 +1,18 @@
 """Defines a simple, generic data (de)serialization mechanism."""
-from .compat import add_metaclass, byte2int, indent, deprecated_func
+from __future__ import annotations
+
 import collections
 import logging
 import struct as pystruct
+from typing import Tuple, Any, Union
+
+from .compat import add_metaclass, byte2int, indent, deprecated_func
 
 
 logger = logging.getLogger()
 
 
-class WasmField(object):
+class WasmField:
     """
     Abstract base class for all fields.
 
@@ -44,8 +48,8 @@ class UIntNField(WasmField):
         64: pystruct.Struct('<Q'),
     }
 
-    def __init__(self, n, **kwargs):
-        super(UIntNField, self).__init__(**kwargs)
+    def __init__(self, n):
+        super().__init__()
         self.n = n
         self.byte_size = n // 8
         self.converter = self.CONVERTER_MAP[n]
@@ -105,8 +109,8 @@ class SignedLeb128Field(WasmField):
 
 class CondField(WasmField):
     """Optionalizes a field, depending on the context."""
-    def __init__(self, field, condition, **kwargs):
-        super(CondField, self).__init__(**kwargs)
+    def __init__(self, field, condition):
+        super().__init__()
         self.field = field
         self.condition = condition
 
@@ -121,8 +125,8 @@ class CondField(WasmField):
 
 class RepeatField(WasmField):
     """Repeats a field, having the repeat count depend on the context."""
-    def __init__(self, field, repeat_count_getter, **kwargs):
-        super(RepeatField, self).__init__(**kwargs)
+    def __init__(self, field, repeat_count_getter):
+        super().__init__()
         self.field = field
         self.repeat_count_getter = repeat_count_getter
 
@@ -162,8 +166,8 @@ class RepeatField(WasmField):
 
 class ConstField(WasmField):
     """Pseudo-Field, always returning a constant, consuming/generating no data."""
-    def __init__(self, const, **kwargs):
-        super(ConstField, self).__init__(**kwargs)
+    def __init__(self, const):
+        super().__init__()
         self.const = const
 
     def from_raw(self, ctx, raw):
@@ -174,8 +178,8 @@ class ChoiceField(WasmField):
     """Depending on context, either represent this or that field type."""
     _shared_none_field = ConstField(None)
 
-    def __init__(self, choice_field_map, choice_getter, **kwargs):
-        super(ChoiceField, self).__init__(**kwargs)
+    def __init__(self, choice_field_map, choice_getter):
+        super().__init__()
         self.choice_field_map = choice_field_map
         self.choice_getter = choice_getter
 
@@ -204,8 +208,11 @@ class BytesField(RepeatField):
 
 FieldMeta = collections.namedtuple('FieldMeta', 'name field')
 
+# class FieldMeta(NamedTuple):
+#     name: str
 
-class MetaInfo(object):
+
+class MetaInfo:
     """Meta information for a `Structure`."""
     def __init__(self):
         self.fields = []
@@ -293,7 +300,7 @@ class StructureMeta(type):
 @add_metaclass(StructureMeta)
 class Structure(WasmField):
     """Represents a collection of named fields."""
-    def from_raw(self, ctx, raw):
+    def from_raw(self, ctx, raw) -> Tuple[int, Union[StructureData, Any], Union[Structure, Any]]:
         offs = 0
         data = self._meta.data_class(for_decoding=True)
         for cur_field_name, cur_field in self._meta.fields:

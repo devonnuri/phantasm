@@ -1,14 +1,22 @@
 """Provides functions for decoding WASM modules and bytecode."""
-from collections import namedtuple
-from typing import Generator
+from typing import Generator, NamedTuple
 
 from .modtypes import ModuleHeader, Section, NameSubSection
 from .opcodes import Opcode
+from .types import StructureData, Structure
+from .wasmtypes import SectionType, Mutability
 from .compat import byte2int
 
 
-Instruction = namedtuple('Instruction', 'op imm len')
-ModuleFragment = namedtuple('ModuleFragment', 'type data')
+class Instruction(NamedTuple):
+    op: Opcode
+    imm: StructureData
+    len: int
+
+
+class ModuleFragment(NamedTuple):
+    type: Structure
+    data: StructureData
 
 
 def decode_bytecode(bytecode: bytes) -> Generator[Instruction, None, None]:
@@ -36,6 +44,7 @@ def decode_module(module: bytes, decode_name_subsections=False) -> Generator[Mod
     # Read & yield module header.
     hdr = ModuleHeader()
     hdr_len, hdr_data, _ = hdr.from_raw(None, module_wnd)
+    
     yield ModuleFragment(hdr, hdr_data)
     module_wnd = module_wnd[hdr_len:]
 
@@ -47,8 +56,8 @@ def decode_module(module: bytes, decode_name_subsections=False) -> Generator[Mod
         # If requested, decode name subsections when encountered.
         if (
             decode_name_subsections and
-            sec_data.id == SEC_UNK and
-            sec_data.name == SEC_NAME
+            sec_data.id == SectionType.UNKNOWN and
+            sec_data.name == SectionType.NAME
         ):
             sec_wnd = sec_data.payload
             while sec_wnd:
