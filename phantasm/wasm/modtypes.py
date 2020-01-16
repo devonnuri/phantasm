@@ -2,7 +2,7 @@
 from __future__ import print_function, absolute_import, division, unicode_literals
 
 from .wasmtypes import *
-from .opcodes import OP_END
+from .opcodes import Opcode
 from .types import (
     Structure, CondField, RepeatField,
     ChoiceField, WasmField, ConstField, BytesField,
@@ -94,7 +94,7 @@ class InitExpr(WasmField):
         for cur_insn in decode_bytecode(raw):
             offs += cur_insn.len
             instrs.append(cur_insn)
-            if cur_insn.op.id == OP_END:
+            if cur_insn.op.id == Opcode.END.id:
                 break
 
         return offs, instrs, self
@@ -201,8 +201,8 @@ class NameSubSection(Structure):
     name_type = VarUInt7Field()
     payload_len = VarUInt32Field()
     payload = ChoiceField({
-        NAME_SUBSEC_FUNCTION: NameMap(),
-        NAME_SUBSEC_LOCAL: LocalNameMap(),
+        NameSubSectionType.FUNCTION: NameMap(),
+        NameSubSectionType.LOCAL: LocalNameMap(),
     }, lambda x: x.name_type)
 
 
@@ -219,22 +219,22 @@ class Section(Structure):
     )
 
     payload = ChoiceField({
-        SEC_UNK: BytesField(lambda x: (
+        SectionType.UNKNOWN: BytesField(lambda x: (
             x.payload_len -
             x.get_decoder_meta()['lengths']['name'] -
             x.get_decoder_meta()['lengths']['name_len']
         )),
-        SEC_TYPE: TypeSection(),
-        SEC_IMPORT: ImportSection(),
-        SEC_FUNCTION: FunctionSection(),
-        SEC_TABLE: TableSection(),
-        SEC_MEMORY: MemorySection(),
-        SEC_GLOBAL: GlobalSection(),
-        SEC_EXPORT: ExportSection(),
-        SEC_START: StartSection(),
-        SEC_ELEMENT: ElementSection(),
-        SEC_CODE: CodeSection(),
-        SEC_DATA: DataSection(),
+        SectionType.TYPE: TypeSection(),
+        SectionType.IMPORT: ImportSection(),
+        SectionType.FUNCTION: FunctionSection(),
+        SectionType.TABLE: TableSection(),
+        SectionType.MEMORY: MemorySection(),
+        SectionType.GLOBAL: GlobalSection(),
+        SectionType.EXPORT: ExportSection(),
+        SectionType.START: StartSection(),
+        SectionType.ELEMENT: ElementSection(),
+        SectionType.CODE: CodeSection(),
+        SectionType.DATA: DataSection(),
     }, lambda x: x.id)
 
     overhang = BytesField(lambda x: max(0, (

@@ -14,6 +14,7 @@ class Parser:
 
         modules = iter(wasm.decode_module(raw_bytes))
         header, header_data = next(modules)
+        print(header.to_string(header_data))
 
         self.version = header.version
         print(header.version)

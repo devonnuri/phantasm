@@ -1,12 +1,13 @@
 """Defines functions converting raw instructions into textual form."""
 import itertools
+from typing import Generator
 
-from .opcodes import INSN_LEAVE_BLOCK, INSN_ENTER_BLOCK
-from .decode import decode_bytecode
-from .wasmtypes import VAL_TYPE_I32, VAL_TYPE_I64, VAL_TYPE_F32, VAL_TYPE_F64, MUTABLE, IMMUTABLE
+from .opcodes import InsFlag
+from .decode import decode_bytecode, Instruction
+from .wasmtypes import ValueType, Mutability
 
 
-def format_instruction(insn):
+def format_instruction(insn: Instruction):
     """
     Takes a raw `Instruction` and translates it into a human readable text
     representation. As of writing, the text representation for WASM is not yet
@@ -26,8 +27,8 @@ def format_instruction(insn):
 
 
 _mutability_str_mapping = {
-    MUTABLE: "mut",
-    IMMUTABLE: ""
+    Mutability.MUTABLE: "mut",
+    Mutability.IMMUTABLE: ""
 }
 
 
@@ -40,10 +41,10 @@ def format_mutability(mutability):
 
 
 _lang_type_str_mapping = {
-    VAL_TYPE_I32: 'i32',
-    VAL_TYPE_I64: 'i64',
-    VAL_TYPE_F32: 'f32',
-    VAL_TYPE_F64: 'f64',
+    ValueType.I32: 'i32',
+    ValueType.I64: 'i64',
+    ValueType.F32: 'f32',
+    ValueType.F64: 'f64',
 }
 
 
@@ -60,7 +61,7 @@ def format_function(
         func_type=None,
         indent=2,
         format_locals=True,
-):
+) -> Generator[str, None, None]:
     """
     Takes a `FunctionBody` and optionally a `FunctionType`, yielding the string 
     representation of the function line by line. The function type is required
@@ -85,8 +86,8 @@ def format_function(
 
     level = 1
     for cur_insn in decode_bytecode(func_body.code):
-        if cur_insn.op.flags & INSN_LEAVE_BLOCK:
+        if cur_insn.op.flags & InsFlag.LEAVE_BLOCK:
             level -= 1
         yield ' ' * (level * indent) + format_instruction(cur_insn)
-        if cur_insn.op.flags & INSN_ENTER_BLOCK:
+        if cur_insn.op.flags & InsFlag.ENTER_BLOCK:
             level += 1

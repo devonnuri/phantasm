@@ -25,7 +25,7 @@ class WasmField(object):
     _type_ctr = 0
 
     def __init__(self):
-        self._type_id = WasmField._type_ctr
+        self.type_id = WasmField._type_ctr
         WasmField._type_ctr += 1
 
     def from_raw(self, struct, raw):
@@ -277,7 +277,7 @@ class StructureMeta(type):
                 )
 
         # Order fields by type ID (see `WasmField` for the "why").
-        meta.fields = sorted(meta.fields, key=lambda x: x.field._type_id)
+        meta.fields = sorted(meta.fields, key=lambda x: x.field.type_id)
 
         # Create data class type for "instances".
         class GeneratedStructureData(StructureData):

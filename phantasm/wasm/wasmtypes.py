@@ -28,45 +28,44 @@ ExternalKindField = UInt8Field
 BlockTypeField = VarInt7Field
 
 
-#
-# Constants
-#
+class SectionType:
+    UNKNOWN = 0
+    TYPE = 1
+    IMPORT = 2
+    FUNCTION = 3
+    TABLE = 4
+    MEMORY = 5
+    GLOBAL = 6
+    EXPORT = 7
+    START = 8
+    ELEMENT = 9
+    CODE = 10
+    DATA = 11
+    NAME = b'name'
 
 
-# Section types.
-SEC_UNK = 0
-SEC_TYPE = 1
-SEC_IMPORT = 2
-SEC_FUNCTION = 3
-SEC_TABLE = 4
-SEC_MEMORY = 5
-SEC_GLOBAL = 6
-SEC_EXPORT = 7
-SEC_START = 8
-SEC_ELEMENT = 9
-SEC_CODE = 10
-SEC_DATA = 11
-SEC_NAME = b'name'
+class LangType:
+    I32 = -0x01
+    I64 = -0x02
+    F32 = -0x03
+    F64 = -0x04
+    ANYFUNC = -0x10
+    FUNC = -0x20
+    EMPTY = -0x40
 
-# Language types.
-LANG_TYPE_I32 = -0x01
-LANG_TYPE_I64 = -0x02
-LANG_TYPE_F32 = -0x03
-LANG_TYPE_F64 = -0x04
-LANG_TYPE_ANYFUNC = -0x10
-LANG_TYPE_FUNC = -0x20
-LANG_TYPE_EMPTY = -0x40
 
-# Value types.
-VAL_TYPE_I32 = LANG_TYPE_I32
-VAL_TYPE_I64 = LANG_TYPE_I64
-VAL_TYPE_F32 = LANG_TYPE_F32
-VAL_TYPE_F64 = LANG_TYPE_F64
+class ValueType:
+    I32 = LangType.I32
+    I64 = LangType.I64
+    F32 = LangType.F32
+    F64 = LangType.F64
 
-# Name subsection types.
-NAME_SUBSEC_FUNCTION = 1
-NAME_SUBSEC_LOCAL = 2
 
-# Mutability in global types.
-IMMUTABLE = 0
-MUTABLE = 1
+class NameSubSectionType:
+    FUNCTION = 1
+    LOCAL = 2
+
+
+class Mutability:
+    IMMUTABLE = 0
+    MUTABLE = 1

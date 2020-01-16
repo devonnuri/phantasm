@@ -2,8 +2,8 @@
 from collections import namedtuple
 from typing import Generator
 
-from .modtypes import ModuleHeader, Section, SEC_UNK, SEC_NAME, NameSubSection
-from .opcodes import OPCODE_MAP
+from .modtypes import ModuleHeader, Section, NameSubSection
+from .opcodes import Opcode
 from .compat import byte2int
 
 
@@ -11,12 +11,12 @@ Instruction = namedtuple('Instruction', 'op imm len')
 ModuleFragment = namedtuple('ModuleFragment', 'type data')
 
 
-def decode_bytecode(bytecode: bytes) -> Generator[Instruction]:
+def decode_bytecode(bytecode: bytes) -> Generator[Instruction, None, None]:
     """Decodes raw bytecode, yielding `Instruction`s."""
     bytecode_wnd = memoryview(bytecode)
     while bytecode_wnd:
         opcode_id = byte2int(bytecode_wnd[0])
-        opcode = OPCODE_MAP[opcode_id]
+        opcode = Opcode.from_id(opcode_id)
 
         if opcode.imm_struct is not None:
             offs, imm, _ = opcode.imm_struct.from_raw(None, bytecode_wnd[1:])
@@ -29,7 +29,7 @@ def decode_bytecode(bytecode: bytes) -> Generator[Instruction]:
         bytecode_wnd = bytecode_wnd[insn_len:]
 
 
-def decode_module(module: bytes, decode_name_subsections=False) -> Generator[ModuleFragment]:
+def decode_module(module: bytes, decode_name_subsections=False) -> Generator[ModuleFragment, None, None]:
     """Decodes raw WASM modules, yielding `ModuleFragment`s."""
     module_wnd = memoryview(module)
 
