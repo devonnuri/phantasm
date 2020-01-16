@@ -1,8 +1,5 @@
 from typing import IO
-
-from phantasm.parse.construct import Struct, Const, FixedUInt
-from phantasm.parse.wasmstructs import U32, Vec, ValType
-from phantasm.utils.exceptions import wasm_assert
+import wasm
 
 
 class Parser:
@@ -13,23 +10,13 @@ class Parser:
 
     def parse(self):
         self.stream.seek(0)
+        raw_bytes = self.stream.read()
 
-        struct = Struct('modules',
-                        Const('magic', b'\x00asm'),
-                        FixedUInt('version', 4),
-                        Struct(
-                            'typesec',
-                            Const('N', b'\x01'),
-                            U32('size'),
-                            Vec('functypes',
-                                Struct('functype',
-                                       Const(None, b'\x60'),
-                                       Vec('t1', ValType),
-                                       Vec('t2', ValType)))
-                        ))
+        modules = iter(wasm.decode_module(raw_bytes))
+        header, header_data = next(modules)
 
-        result = struct.check(self.stream)
+        self.version = header.version
+        print(header.version.to_string())
 
-        wasm_assert(result['magic'], 'Incorrect magic number')
-
-        return result
+        for current_section in modules:
+            print(current_section)
