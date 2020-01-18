@@ -29,11 +29,11 @@ class Opcode(Enum):
     DROP = 0x1a, 'drop', None, 0
     SELECT = 0x1b, 'select', None, 0
 
-    GET_LOCAL = 0x20, 'get_local', LocalVarXsImm(), 0
-    SET_LOCAL = 0x21, 'set_local', LocalVarXsImm(), 0
-    TEE_LOCAL = 0x22, 'tee_local', LocalVarXsImm(), 0
-    GET_GLOBAL = 0x23, 'get_global', GlobalVarXsImm(), 0
-    SET_GLOBAL = 0x24, 'set_global', GlobalVarXsImm(), 0
+    LOCAL_GET = 0x20, 'local.get', LocalVarXsImm(), 0
+    LOCAL_SET = 0x21, 'local.set', LocalVarXsImm(), 0
+    LOCAL_TEE = 0x22, 'local.tee', LocalVarXsImm(), 0
+    GLOBAL_GET = 0x23, 'global.get', GlobalVarXsImm(), 0
+    GLOBAL_SET = 0x24, 'global.set', GlobalVarXsImm(), 0
 
     I32_LOAD = 0x28, 'i32.load', MemoryImm(), 0
     I64_LOAD = 0x29, 'i64.load', MemoryImm(), 0

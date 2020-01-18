@@ -1,5 +1,6 @@
 from typing import IO
 import phantasm.wasm as wasm
+from phantasm.wasm.wasmtypes import SectionType
 
 
 class Parser:
@@ -13,8 +14,10 @@ class Parser:
         raw_bytes = self.stream.read()
 
         modules = iter(wasm.decode_module(raw_bytes))
-        header, header_data = next(modules)
-        print(header.to_string(header_data))
+        header = next(modules)
 
         for section, section_data in modules:
-            print(section.to_string(section_data))
+            if section_data.id == SectionType.CODE:
+                print(section.to_string(section_data))
+                for a in wasm.decode_bytecode(section_data.payload.bodies[1].code.tobytes()):
+                    print(a)

@@ -4,7 +4,7 @@ from typing import Generator, NamedTuple
 from .modtypes import ModuleHeader, Section, NameSubSection
 from .opcodes import Opcode
 from .types import StructureData, Structure
-from .wasmtypes import SectionType, Mutability
+from .wasmtypes import SectionType
 from .compat import byte2int
 
 
@@ -44,7 +44,7 @@ def decode_module(module: bytes, decode_name_subsections=False) -> Generator[Mod
     # Read & yield module header.
     hdr = ModuleHeader()
     hdr_len, hdr_data, _ = hdr.from_raw(None, module_wnd)
-    
+
     yield ModuleFragment(hdr, hdr_data)
     module_wnd = module_wnd[hdr_len:]
 
